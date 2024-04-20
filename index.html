@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Drawing App</title>
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <style>
+        #canvas {
+            border: 1px solid #ccc;
+        }
+        h1{
+            text-align: center;
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Let's Paint</h1>
+        <div class="columns">
+            <div class="column col-12 text-center">
+                <canvas id="canvas" width="800" height="600"></canvas>
+            </div>
+            <div class="column col-12 text-center">
+                <div class="form-group">
+                    <label for="brush-size">Brush Size:</label>
+                    <input type="range" id="brush-size" min="2" max="15" value="5" onchange="updateBrushSize()">
+                    <span id="brush-size-display">5</span>
+                </div>
+                <div class="form-group">
+                    <button id="brush-blue" class="btn btn-primary"><i class="fas fa-paint-brush"></i> Blue</button>
+                    <button id="brush-black" class="btn btn-dark"><i class="fas fa-paint-brush"></i> Black</button>
+                    <button id="brush-red" class="btn btn-error"><i class="fas fa-paint-brush"></i> Red</button>
+                    <button id="brush-yellow" class="btn btn-warning"><i class="fas fa-paint-brush"></i> Yellow</button>
+                </div>
+                <div class="form-group">
+                    <button id="eraser" class="btn btn-secondary"><i class="fas fa-eraser"></i> Eraser</button>
+                    <button id="clean" class="btn btn-success"><i class="far fa-file"></i> Clean</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const brushSizeInput = document.getElementById('brush-size');
+        const brushBlueBtn = document.getElementById('brush-blue');
+        const brushBlackBtn = document.getElementById('brush-black');
+        const brushRedBtn = document.getElementById('brush-red');
+        const brushYellowBtn = document.getElementById('brush-yellow');
+        const eraserBtn = document.getElementById('eraser');
+        const cleanBtn = document.getElementById('clean');
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let brushColor = 'black';
+        let brushSize = 5;
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            ctx.strokeStyle = brushColor;
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function endDrawing() {
+            isDrawing = false;
+        }
+
+        function setBrushColor(color) {
+            brushColor = color;
+        }
+
+        function setBrushSize(size) {
+            brushSize = size;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        function updateBrushSize() {
+            const brushSizeInput = document.getElementById('brush-size');
+            const brushSizeDisplay = document.getElementById('brush-size-display');
+            brushSizeDisplay.textContent = brushSizeInput.value;
+        }
+
+        // Call the function initially to set the default brush size
+        updateBrushSize();
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', endDrawing);
+        canvas.addEventListener('mouseout', endDrawing);
+
+        brushBlueBtn.addEventListener('click', () => setBrushColor('blue'));
+        brushBlackBtn.addEventListener('click', () => setBrushColor('black'));
+        brushRedBtn.addEventListener('click', () => setBrushColor('red'));
+        brushYellowBtn.addEventListener('click', () => setBrushColor('yellow'));
+
+        eraserBtn.addEventListener('click', () => setBrushColor('white'));
+
+        brushSizeInput.addEventListener('input', (e) => setBrushSize(e.target.value));
+
+        cleanBtn.addEventListener('click', clearCanvas);
+    </script>
+</body>
+</html>
+``
